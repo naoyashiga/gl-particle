@@ -26,7 +26,6 @@ export default class ParticleSystem {
   }
 
   setup() {
-    console.log(this.particles);
 
     this.particles.forEach((p) => {
 
@@ -75,8 +74,8 @@ export default class ParticleSystem {
       pTheta = pTheta + this.velThetaArr[num];
       this.thetaArr[num] = pTheta;
 
-      targetX = this.radius * Math.cos(pTheta);
-      targetY = this.radius * Math.sin(pTheta);
+      targetX = rad * Math.cos(pTheta);
+      targetY = rad * Math.sin(pTheta);
 
       px = this.vertices[bp + 3];
       px += (targetX - px) * (Math.random() * .1 + .1);
