@@ -1,0 +1,21 @@
+{
+  "name": "gl-beginner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "glslify": "^5.0.0"
+  },
+  "devDependencies": {
+    "budo": "^9.0.0",
+    "canvas-loop": "^1.0.4",
+    "canvas-testbed": "^1.0.0",
+    "webgl-context": "^2.1.2"
+  },
+  "scripts": {
+    "start": "budo demo/index.js:bundle.js --live -- --transform glslify",
+    "test": "standard"
+  },
+  "author": "naoyashiga",
+  "license": "MIT"
+}
