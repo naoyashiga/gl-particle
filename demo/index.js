@@ -1,6 +1,8 @@
 import Projection from './components/transformation/Projection'
 import ModelView from './components/transformation/ModelView'
 
+import ParticleSystem from './components/particle/ParticleSystem'
+
 const gl = require('webgl-context')()
 const canvas = document.body.appendChild(gl.canvas)
 
@@ -35,6 +37,8 @@ var target = [];
 var randomTargetXArr = [], randomTargetYArr = [];
 drawType = 2;
 
+const particleSystem = new ParticleSystem()
+
 createShaders()
 createVertices()
 render()
@@ -43,21 +47,27 @@ render()
 
 app.start()
 
-setup()
+// setup()
+for (var i = 0; i < particleSystem.numLines; i++) {
+  particleSystem.addParticle()
+}
+
+particleSystem.setup()
+
 setShaderVariables()
 
 animate()
 
 
 function setShaderVariables() {
-  vertices = new Float32Array(vertices)
-  velocities = new Float32Array(velocities)
+  // vertices = new Float32Array(vertices)
+  // velocities = new Float32Array(velocities)
+  //
+  // thetaArr = new Float32Array(thetaArr)
+  // velThetaArr = new Float32Array(velThetaArr)
+  // velRadArr = new Float32Array(velRadArr)
 
-  thetaArr = new Float32Array(thetaArr)
-  velThetaArr = new Float32Array(velThetaArr)
-  velRadArr = new Float32Array(velRadArr)
-
-  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.DYNAMIC_DRAW)
+  gl.bufferData(gl.ARRAY_BUFFER, particleSystem.vertices, gl.DYNAMIC_DRAW)
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
   var projectionMatrix = new Projection(canvas).matrix
@@ -79,15 +89,16 @@ function animate() {
 }
 
 function drawScene() {
-  draw1()
+  // draw1()
+  particleSystem.draw()
 
 
   gl.lineWidth(1)
-  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.DYNAMIC_DRAW)
+  gl.bufferData(gl.ARRAY_BUFFER, particleSystem.vertices, gl.DYNAMIC_DRAW)
 
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-  gl.drawArrays(gl.LINES, 0, numLines)
+  gl.drawArrays(gl.LINES, 0, particleSystem.numLines)
   // gl.drawArrays(gl.LINES, 0, numLines)
 
   gl.flush()
@@ -138,76 +149,84 @@ function render() {
   // gl.drawArrays(gl.POINTS, 0, 1);
 }
 
-function setup() {
-  vertices = [];
-  velThetaArr = [];
-  velRadArr = [];
-  ratio = cw / ch;
-  velocities = [];
-  thetaArr = [];
-  freqArr = [];
-  boldRateArr = [];
-
-  for (var i = 0; i < numLines; i++) {
-    var rad = ( 0.5 + .2 * Math.random() );
-    var theta = Math.random() * Math.PI * 2;
-    var velTheta = Math.random() * Math.PI * 2 / 300;
-    var freq = Math.random() * 0.12 + 0.03;
-    var boldRate = Math.random() * .04 + .01;
-    var randomPosX = (Math.random() * 20  - 1) * window.innerWidth / window.innerHeight;
-    var randomPosY = Math.random() * 2 - 1;
-
-    vertices.push(rad * Math.cos(theta), rad * Math.sin(theta), 1.83);
-    vertices.push(rad * Math.cos(theta), rad * Math.sin(theta), 1.83);
-
-    thetaArr.push(theta);
-    velThetaArr.push(velTheta);
-    velRadArr.push(rad);
-    freqArr.push(freq);
-    boldRateArr.push(boldRate);
-
-
-    randomTargetXArr.push(randomPosX);
-    randomTargetYArr.push(randomPosY);
-  }
-
-  freqArr = new Float32Array(freqArr);
-}
-
-function draw1() {
-
-  var i, n = vertices.length, p, bp;
-  var px, py;
-  var pTheta;
-  var rad;
-  var num;
-  var targetX, targetY;
-
-  for (i = 0; i < numLines * 2; i += 2) {
-    count += .3;
-    bp = i * 3;
-
-    vertices[bp] = vertices[bp + 3];
-    vertices[bp + 1] = vertices[bp + 4];
-
-    num = parseInt(i / 2);
-    pTheta = thetaArr[num];
-    rad = velRadArr[num];
-
-    pTheta = pTheta + velThetaArr[num];
-    thetaArr[num] = pTheta;
-
-    targetX = rad * Math.cos(pTheta);
-    targetY = rad * Math.sin(pTheta);
-
-    px = vertices[bp + 3];
-    px += (targetX - px) * (Math.random() * .1 + .1);
-    vertices[bp + 3] = px;
-
-
-    // py = (Math.sin(cn) + 1) * .2 * (Math.random() * .5 - .25);
-    py = vertices[bp + 4];
-    py += (targetY - py) * (Math.random() * .1 + .1);
-    vertices[bp + 4] = py;
-  }
-}
+// function setup() {
+//   vertices = [];
+//   velThetaArr = [];
+//   velRadArr = [];
+//   ratio = cw / ch;
+//   velocities = [];
+//   thetaArr = [];
+//   freqArr = [];
+//   boldRateArr = [];
+//
+//   for (var i = 0; i < numLines; i++) {
+//     var rad = ( 0.5 + .2 * Math.random() );
+//     var theta = Math.random() * Math.PI * 2;
+//     var velTheta = Math.random() * Math.PI * 2 / 300;
+//     var freq = Math.random() * 0.12 + 0.03;
+//     var boldRate = Math.random() * .04 + .01;
+//     var randomPosX = (Math.random() * 20  - 1) * window.innerWidth / window.innerHeight;
+//     var randomPosY = Math.random() * 2 - 1;
+//
+//     vertices.push(rad * Math.cos(theta), rad * Math.sin(theta), 1.83);
+//     vertices.push(rad * Math.cos(theta), rad * Math.sin(theta), 1.83);
+//
+//     thetaArr.push(theta);
+//     velThetaArr.push(velTheta);
+//     velRadArr.push(rad);
+//     freqArr.push(freq);
+//     boldRateArr.push(boldRate);
+//
+//
+//     randomTargetXArr.push(randomPosX);
+//     randomTargetYArr.push(randomPosY);
+//   }
+//
+//   freqArr = new Float32Array(freqArr);
+//   vertices = new Float32Array(vertices)
+//   velocities = new Float32Array(velocities)
+//
+//   thetaArr = new Float32Array(thetaArr)
+//   velThetaArr = new Float32Array(velThetaArr)
+//   velRadArr = new Float32Array(velRadArr)
+// }
+//
+// function draw1() {
+//
+//   // particleSystem.draw()
+//
+//   var i, n = vertices.length, p, bp;
+//   var px, py;
+//   var pTheta;
+//   var rad;
+//   var num;
+//   var targetX, targetY;
+//
+//   for (i = 0; i < numLines * 2; i += 2) {
+//     count += .3;
+//     bp = i * 3;
+//
+//     vertices[bp] = vertices[bp + 3];
+//     vertices[bp + 1] = vertices[bp + 4];
+//
+//     num = parseInt(i / 2);
+//     pTheta = thetaArr[num];
+//     rad = velRadArr[num];
+//
+//     pTheta = pTheta + velThetaArr[num];
+//     thetaArr[num] = pTheta;
+//
+//     targetX = rad * Math.cos(pTheta);
+//     targetY = rad * Math.sin(pTheta);
+//
+//     px = vertices[bp + 3];
+//     px += (targetX - px) * (Math.random() * .1 + .1);
+//     vertices[bp + 3] = px;
+//
+//
+//     // py = (Math.sin(cn) + 1) * .2 * (Math.random() * .5 - .25);
+//     py = vertices[bp + 4];
+//     py += (targetY - py) * (Math.random() * .1 + .1);
+//     vertices[bp + 4] = py;
+//   }
+// }
