@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "babel-preset-es2015": "^6.14.0",
+    "babelify": "^7.3.0",
     "glslify": "^5.0.0"
   },
   "devDependencies": {
@@ -13,7 +15,7 @@
     "webgl-context": "^2.1.2"
   },
   "scripts": {
-    "start": "budo demo/index.js:bundle.js --live -- --transform glslify",
+    "start": "budo demo/index.js:bundle.js --live -- -t [babelify --presets es2015] -t glslify",
     "test": "standard"
   },
   "author": "naoyashiga",

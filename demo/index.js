@@ -1,3 +1,5 @@
+import Projection from './components/transformation/Projection'
+
 const gl = require('webgl-context')()
 const canvas = document.body.appendChild(gl.canvas)
 
@@ -8,6 +10,8 @@ const app = require('canvas-loop')(canvas, {
 const glslify = require('glslify')
 const vert = glslify('./index.vert')
 const frag = glslify('./index.frag')
+
+console.log();
 
 var shaderProgram
 
@@ -57,29 +61,7 @@ function setShaderVariables() {
   gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.DYNAMIC_DRAW)
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-  // viewing frustum
-  var fieldOfView = 30.0
-  var aspectRatio = canvas.width / canvas.height
-  var nearPlane = 1.0
-  var farPlane = 10000
-  var top = nearPlane * Math.tan(fieldOfView * Math.PI / 360)
-  var bottom = -top
-  var right = top * aspectRatio
-  var left = -right
-
-  // glFrustum
-  var a = (right + left) / (right - left);
-  var b = (top + bottom) / (top - bottom);
-  var c = (farPlane + nearPlane) / (farPlane - nearPlane);
-  var d = (2 * farPlane * nearPlane) / (farPlane - nearPlane);
-  var x = (2 * nearPlane) / (right - left);
-  var y = (2 * nearPlane) / (top - bottom);
-  var projectionMatrix = [
-    x, 0, a, 0,
-    0, y, b, 0,
-    0, 0, c, d,
-    0, 0, -1, 0
-  ];
+  var projectionMatrix = new Projection(canvas).matrix
 
   // modelview
   var modelViewMatrix = [
