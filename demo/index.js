@@ -1,4 +1,5 @@
 import Projection from './components/transformation/Projection'
+import ModelView from './components/transformation/ModelView'
 
 const gl = require('webgl-context')()
 const canvas = document.body.appendChild(gl.canvas)
@@ -10,8 +11,6 @@ const app = require('canvas-loop')(canvas, {
 const glslify = require('glslify')
 const vert = glslify('./index.vert')
 const frag = glslify('./index.frag')
-
-console.log();
 
 var shaderProgram
 
@@ -62,14 +61,7 @@ function setShaderVariables() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
   var projectionMatrix = new Projection(canvas).matrix
-
-  // modelview
-  var modelViewMatrix = [
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1
-  ];
+  var modelViewMatrix = new ModelView().matrix
 
   var vertexPosAttribLocation = gl.getAttribLocation(shaderProgram, "vertexPosition")
   gl.vertexAttribPointer(vertexPosAttribLocation, 3.0, gl.FLOAT, false, 0, 0)
