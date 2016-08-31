@@ -101,6 +101,4 @@ function glSetup() {
   gl.enable(gl.BLEND)
   gl.disable(gl.DEPTH_TEST)
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE)
-
-  // gl.disable(gl.CULL_FACE)
 }
