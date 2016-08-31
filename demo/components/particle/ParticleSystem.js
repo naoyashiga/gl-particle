@@ -16,7 +16,7 @@ export default class ParticleSystem {
 
     this.particles = []
 
-    this.numLines = 3000
+    this.numLines = 1000
 
     this.count = 0
   }

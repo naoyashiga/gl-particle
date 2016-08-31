@@ -14,84 +14,46 @@ const glslify = require('glslify')
 const vert = glslify('./index.vert')
 const frag = glslify('./index.frag')
 
-var shaderProgram
-
-var ratio,
-  vertices,
-  velocities,
-  freqArr,
-  cw,
-  ch,
-  colorLoc,
-  thetaArr,
-  velThetaArr,
-  velRadArr,
-  boldRateArr,
-  drawType,
-  numLines = 3000;
-
-  var count = 0;
-  var cn = 0
-
-var target = [];
-var randomTargetXArr = [], randomTargetYArr = [];
-drawType = 2;
-
 const particleSystem = new ParticleSystem()
 
+let shaderProgram
+
 createShaders()
-createVertices()
-render()
+glSetup()
 
-// app.on('tick', render)
-
+app.on('tick', drawScene)
 app.start()
 
-// setup()
-for (var i = 0; i < particleSystem.numLines; i++) {
-  particleSystem.addParticle()
-}
-
-particleSystem.setup()
-
+prepareParticle()
 setShaderVariables()
 
-animate()
+function prepareParticle() {
+  for (let i = 0; i < particleSystem.numLines; i++) {
+    particleSystem.addParticle()
+  }
 
+  particleSystem.setup()
+}
 
 function setShaderVariables() {
-  // vertices = new Float32Array(vertices)
-  // velocities = new Float32Array(velocities)
-  //
-  // thetaArr = new Float32Array(thetaArr)
-  // velThetaArr = new Float32Array(velThetaArr)
-  // velRadArr = new Float32Array(velRadArr)
+  const projectionMatrix = new Projection(canvas).matrix
+  const modelViewMatrix = new ModelView().matrix
+
+  const vertexPosAttribLocation = gl.getAttribLocation(shaderProgram, "vertexPosition")
+  gl.vertexAttribPointer(vertexPosAttribLocation, 3.0, gl.FLOAT, false, 0, 0)
+
+  const uModelViewMatrix = gl.getUniformLocation(shaderProgram, "modelViewMatrix")
+  const uprojectionMatrix = gl.getUniformLocation(shaderProgram, "projectionMatrix")
 
   gl.bufferData(gl.ARRAY_BUFFER, particleSystem.vertices, gl.DYNAMIC_DRAW)
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-
-  var projectionMatrix = new Projection(canvas).matrix
-  var modelViewMatrix = new ModelView().matrix
-
-  var vertexPosAttribLocation = gl.getAttribLocation(shaderProgram, "vertexPosition")
-  gl.vertexAttribPointer(vertexPosAttribLocation, 3.0, gl.FLOAT, false, 0, 0)
-
-  var uModelViewMatrix = gl.getUniformLocation(shaderProgram, "modelViewMatrix")
-  var uprojectionMatrix = gl.getUniformLocation(shaderProgram, "projectionMatrix")
 
   gl.uniformMatrix4fv(uModelViewMatrix, false, new Float32Array(projectionMatrix))
   gl.uniformMatrix4fv(uprojectionMatrix, false, new Float32Array(modelViewMatrix))
 }
 
-function animate() {
-  requestAnimationFrame(animate);
-  drawScene();
-}
-
 function drawScene() {
-  // draw1()
   particleSystem.draw()
-
 
   gl.lineWidth(1)
   gl.bufferData(gl.ARRAY_BUFFER, particleSystem.vertices, gl.DYNAMIC_DRAW)
@@ -99,18 +61,19 @@ function drawScene() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
   gl.drawArrays(gl.LINES, 0, particleSystem.numLines)
-  // gl.drawArrays(gl.LINES, 0, numLines)
 
   gl.flush()
 }
 
 function createShaders() {
 
-  var vertexShader = gl.createShader(gl.VERTEX_SHADER)
+  const vertexShader = gl.createShader(gl.VERTEX_SHADER)
+  const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+  const buffer = gl.createBuffer();
+
   gl.shaderSource(vertexShader, vert)
   gl.compileShader(vertexShader)
 
-  var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
   gl.shaderSource(fragmentShader, frag)
   gl.compileShader(fragmentShader)
 
@@ -119,20 +82,15 @@ function createShaders() {
   gl.attachShader(shaderProgram, fragmentShader)
   gl.linkProgram(shaderProgram)
   gl.useProgram(shaderProgram)
-}
 
-function createVertices() {
-  var buffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-  var vertexPosition = gl.getAttribLocation(shaderProgram, "vertexPosition");
-  // gl.vertexAttribPointer(coords, 3, gl.FLOAT, false, 0, 0);
+  const vertexPosition = gl.getAttribLocation(shaderProgram, "vertexPosition");
+
   gl.enableVertexAttribArray(vertexPosition);
-
 }
 
-function render() {
+function glSetup() {
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
   gl.clearColor(0, 0, 0, 1)
 
@@ -145,6 +103,4 @@ function render() {
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE)
 
   // gl.disable(gl.CULL_FACE)
-
-  // gl.drawArrays(gl.POINTS, 0, 1);
 }
