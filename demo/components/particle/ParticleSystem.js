@@ -6,19 +6,11 @@ export default class ParticleSystem {
     this.vertices = [];
     this.velThetaArr = [];
     this.velRadArr = [];
-    // this.velocities = [];
     this.thetaArr = [];
-    // this.freqArr = [];
-    // this.boldRateArr = [];
-
-    // this.randomTargetXArr = []
-    // this.randomTargetYArr = []
 
     this.particles = []
 
     this.numLines = 4000
-
-    // this.count = 0
   }
 
   addParticle() {
@@ -35,17 +27,9 @@ export default class ParticleSystem {
       this.thetaArr.push(p.theta);
       this.velThetaArr.push(p.velTheta);
       this.velRadArr.push(p.radius);
-      // this.freqArr.push(p.freq);
-      // this.boldRateArr.push(p.boldRate);
-
-
-      // this.randomTargetXArr.push(p.randomPosX);
-      // this.randomTargetYArr.push(p.randomPosY);
     })
 
-    // this.freqArr = new Float32Array(this.freqArr);
     this.vertices = new Float32Array(this.vertices)
-    // this.velocities = new Float32Array(this.velocities)
 
     this.thetaArr = new Float32Array(this.thetaArr)
     this.velThetaArr = new Float32Array(this.velThetaArr)
@@ -84,8 +68,6 @@ export default class ParticleSystem {
       px += (targetX - px) * (Math.random() * .1 + .1)
       this.vertices[bp + 3] = px
 
-
-      // py = (Math.sin(cn) + 1) * .2 * (Math.random() * .5 - .25);
       py = this.vertices[bp + 4]
       py += (targetY - py) * (Math.random() * .1 + .1)
       this.vertices[bp + 4] = py
